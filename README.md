@@ -1,5 +1,6 @@
 
-# DTS（Digtial Theater System）音乐剧票务管理系统
+# DTS（Digtial Theater System）
+音乐剧票务管理系统
 
 ## 说明
 
