@@ -97,6 +97,12 @@ public class SysUser extends BaseEntity {
     private Date loginDate;
 
     /**
+     * 观众当前可用积分
+     */
+    @Excel(name = "可用积分")
+    private Integer points;
+
+    /**
      * 部门对象
      */
     @Excels({
@@ -251,6 +257,14 @@ public class SysUser extends BaseEntity {
 
     public void setLoginDate(Date loginDate) {
         this.loginDate = loginDate;
+    }
+
+    public Integer getPoints() {
+        return points;
+    }
+
+    public void setPoints(Integer points) {
+        this.points = points;
     }
 
     public SysDept getDept() {

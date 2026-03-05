@@ -59,6 +59,12 @@
             <artifactId>ruoyi-system</artifactId>
         </dependency>
 
+        <!-- 票务模块-->
+        <dependency>
+            <groupId>com.ruoyi</groupId>
+            <artifactId>ruoyi-ticket</artifactId>
+        </dependency>
+
     </dependencies>
 
 </project>

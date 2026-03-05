@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.ticket.mapper.BizSessionSeatMapper">
+
+    <resultMap type="com.ruoyi.ticket.domain.BizSessionSeat" id="BizSessionSeatResult">
+        <id     property="seatId"       column="seat_id"       />
+        <result property="sessionId"    column="session_id"   />
+        <result property="areaName"     column="area_name"    />
+        <result property="seatName"     column="seat_name"    />
+        <result property="price"        column="price"        />
+        <result property="status"       column="status"       />
+        <result property="lockExpireTime" column="lock_expire_time" />
+    </resultMap>
+
+    <sql id="selectBizSessionSeatVo">
+        select seat_id, session_id, area_name, seat_name, price, status, lock_expire_time
+        from biz_session_seat
+    </sql>
+
+    <select id="selectBizSessionSeatById" parameterType="Long" resultMap="BizSessionSeatResult">
+        <include refid="selectBizSessionSeatVo"/>
+        where seat_id = #{seatId}
+    </select>
+
+    <select id="selectBizSessionSeatList" parameterType="com.ruoyi.ticket.domain.BizSessionSeat" resultMap="BizSessionSeatResult">
+        <include refid="selectBizSessionSeatVo"/>
+        <where>
+            <if test="sessionId != null">
+                AND session_id = #{sessionId}
+            </if>
+            <if test="areaName != null and areaName != ''">
+                AND area_name = #{areaName}
+            </if>
+            <if test="status != null and status != ''">
+                AND status = #{status}
+            </if>
+        </where>
+    </select>
+
+    <insert id="insertBizSessionSeat" parameterType="com.ruoyi.ticket.domain.BizSessionSeat" useGeneratedKeys="true" keyProperty="seatId">
+        insert into biz_session_seat
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="sessionId != null">session_id,</if>
+            <if test="areaName != null and areaName != ''">area_name,</if>
+            <if test="seatName != null and seatName != ''">seat_name,</if>
+            <if test="price != null">price,</if>
+            <if test="status != null">status,</if>
+            <if test="lockExpireTime != null">lock_expire_time,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="sessionId != null">#{sessionId},</if>
+            <if test="areaName != null and areaName != ''">#{areaName},</if>
+            <if test="seatName != null and seatName != ''">#{seatName},</if>
+            <if test="price != null">#{price},</if>
+            <if test="status != null">#{status},</if>
+            <if test="lockExpireTime != null">#{lockExpireTime},</if>
+        </trim>
+    </insert>
+
+    <update id="updateBizSessionSeat" parameterType="com.ruoyi.ticket.domain.BizSessionSeat">
+        update biz_session_seat
+        <set>
+            <if test="sessionId != null">session_id = #{sessionId},</if>
+            <if test="areaName != null and areaName != ''">area_name = #{areaName},</if>
+            <if test="seatName != null and seatName != ''">seat_name = #{seatName},</if>
+            <if test="price != null">price = #{price},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="lockExpireTime != null">lock_expire_time = #{lockExpireTime},</if>
+        </set>
+        where seat_id = #{seatId}
+    </update>
+
+    <delete id="deleteBizSessionSeatById" parameterType="Long">
+        delete from biz_session_seat where seat_id = #{seatId}
+    </delete>
+
+    <delete id="deleteBizSessionSeatByIds" parameterType="Long">
+        delete from biz_session_seat where seat_id in
+        <foreach item="seatId" collection="array" open="(" separator="," close=")">
+            #{seatId}
+        </foreach>
+    </delete>
+
+</mapper>

@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.ticket.mapper.BizOrderTicketMapper">
+
+    <resultMap type="com.ruoyi.ticket.domain.BizOrderTicket" id="BizOrderTicketResult">
+        <id     property="ticketId"   column="ticket_id"   />
+        <result property="orderId"    column="order_id"    />
+        <result property="seatId"     column="seat_id"     />
+        <result property="price"      column="price"      />
+        <result property="status"     column="status"     />
+    </resultMap>
+
+    <sql id="selectBizOrderTicketVo">
+        select ticket_id, order_id, seat_id, price, status
+        from biz_order_ticket
+    </sql>
+
+    <select id="selectBizOrderTicketById" parameterType="Long" resultMap="BizOrderTicketResult">
+        <include refid="selectBizOrderTicketVo"/>
+        where ticket_id = #{ticketId}
+    </select>
+
+    <select id="selectBizOrderTicketList" parameterType="com.ruoyi.ticket.domain.BizOrderTicket" resultMap="BizOrderTicketResult">
+        <include refid="selectBizOrderTicketVo"/>
+        <where>
+            <if test="orderId != null">
+                AND order_id = #{orderId}
+            </if>
+            <if test="seatId != null">
+                AND seat_id = #{seatId}
+            </if>
+            <if test="status != null and status != ''">
+                AND status = #{status}
+            </if>
+        </where>
+    </select>
+
+    <insert id="insertBizOrderTicket" parameterType="com.ruoyi.ticket.domain.BizOrderTicket" useGeneratedKeys="true" keyProperty="ticketId">
+        insert into biz_order_ticket
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="orderId != null">order_id,</if>
+            <if test="seatId != null">seat_id,</if>
+            <if test="price != null">price,</if>
+            <if test="status != null">status,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="orderId != null">#{orderId},</if>
+            <if test="seatId != null">#{seatId},</if>
+            <if test="price != null">#{price},</if>
+            <if test="status != null">#{status},</if>
+        </trim>
+    </insert>
+
+    <update id="updateBizOrderTicket" parameterType="com.ruoyi.ticket.domain.BizOrderTicket">
+        update biz_order_ticket
+        <set>
+            <if test="orderId != null">order_id = #{orderId},</if>
+            <if test="seatId != null">seat_id = #{seatId},</if>
+            <if test="price != null">price = #{price},</if>
+            <if test="status != null">status = #{status},</if>
+        </set>
+        where ticket_id = #{ticketId}
+    </update>
+
+    <delete id="deleteBizOrderTicketById" parameterType="Long">
+        delete from biz_order_ticket where ticket_id = #{ticketId}
+    </delete>
+
+    <delete id="deleteBizOrderTicketByIds" parameterType="Long">
+        delete from biz_order_ticket where ticket_id in
+        <foreach item="ticketId" collection="array" open="(" separator="," close=")">
+            #{ticketId}
+        </foreach>
+    </delete>
+
+</mapper>

@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.ticket.mapper.BizPerformanceMapper">
+
+    <resultMap type="com.ruoyi.ticket.domain.BizPerformance" id="BizPerformanceResult">
+        <id     property="performanceId"   column="performance_id"   />
+        <result property="title"           column="title"            />
+        <result property="posterUrl"        column="poster_url"       />
+        <result property="description"      column="description"      />
+        <result property="isRecommend"      column="is_recommend"     />
+        <result property="status"           column="status"           />
+        <result property="createTime"        column="create_time"      />
+    </resultMap>
+
+    <sql id="selectBizPerformanceVo">
+        select performance_id, title, poster_url, description, is_recommend, status, create_time
+        from biz_performance
+    </sql>
+
+    <select id="selectBizPerformanceById" parameterType="Long" resultMap="BizPerformanceResult">
+        <include refid="selectBizPerformanceVo"/>
+        where performance_id = #{performanceId}
+    </select>
+
+    <select id="selectBizPerformanceList" parameterType="com.ruoyi.ticket.domain.BizPerformance" resultMap="BizPerformanceResult">
+        <include refid="selectBizPerformanceVo"/>
+        <where>
+            <if test="title != null and title != ''">
+                AND title like concat('%', #{title}, '%')
+            </if>
+            <if test="isRecommend != null and isRecommend != ''">
+                AND is_recommend = #{isRecommend}
+            </if>
+            <if test="status != null and status != ''">
+                AND status = #{status}
+            </if>
+        </where>
+    </select>
+
+    <insert id="insertBizPerformance" parameterType="com.ruoyi.ticket.domain.BizPerformance" useGeneratedKeys="true" keyProperty="performanceId">
+        insert into biz_performance
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="title != null and title != ''">title,</if>
+            <if test="posterUrl != null">poster_url,</if>
+            <if test="description != null">description,</if>
+            <if test="isRecommend != null">is_recommend,</if>
+            <if test="status != null">status,</if>
+            create_time
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="title != null and title != ''">#{title},</if>
+            <if test="posterUrl != null">#{posterUrl},</if>
+            <if test="description != null">#{description},</if>
+            <if test="isRecommend != null">#{isRecommend},</if>
+            <if test="status != null">#{status},</if>
+            sysdate()
+        </trim>
+    </insert>
+
+    <update id="updateBizPerformance" parameterType="com.ruoyi.ticket.domain.BizPerformance">
+        update biz_performance
+        <set>
+            <if test="title != null and title != ''">title = #{title},</if>
+            <if test="posterUrl != null">poster_url = #{posterUrl},</if>
+            <if test="description != null">description = #{description},</if>
+            <if test="isRecommend != null">is_recommend = #{isRecommend},</if>
+            <if test="status != null">status = #{status},</if>
+        </set>
+        where performance_id = #{performanceId}
+    </update>
+
+    <delete id="deleteBizPerformanceById" parameterType="Long">
+        delete from biz_performance where performance_id = #{performanceId}
+    </delete>
+
+    <delete id="deleteBizPerformanceByIds" parameterType="Long">
+        delete from biz_performance where performance_id in
+        <foreach item="performanceId" collection="array" open="(" separator="," close=")">
+            #{performanceId}
+        </foreach>
+    </delete>
+
+</mapper>

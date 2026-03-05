@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.ticket.mapper.BizPerformanceSessionMapper">
+
+    <resultMap type="com.ruoyi.ticket.domain.BizPerformanceSession" id="BizPerformanceSessionResult">
+        <id     property="sessionId"       column="session_id"       />
+        <result property="performanceId"  column="performance_id"  />
+        <result property="venueName"      column="venue_name"       />
+        <result property="startTime"      column="start_time"      />
+        <result property="saleStartTime"  column="sale_start_time"  />
+        <result property="status"         column="status"           />
+    </resultMap>
+
+    <sql id="selectBizPerformanceSessionVo">
+        select session_id, performance_id, venue_name, start_time, sale_start_time, status
+        from biz_performance_session
+    </sql>
+
+    <select id="selectBizPerformanceSessionById" parameterType="Long" resultMap="BizPerformanceSessionResult">
+        <include refid="selectBizPerformanceSessionVo"/>
+        where session_id = #{sessionId}
+    </select>
+
+    <select id="selectBizPerformanceSessionList" parameterType="com.ruoyi.ticket.domain.BizPerformanceSession" resultMap="BizPerformanceSessionResult">
+        <include refid="selectBizPerformanceSessionVo"/>
+        <where>
+            <if test="performanceId != null">
+                AND performance_id = #{performanceId}
+            </if>
+            <if test="venueName != null and venueName != ''">
+                AND venue_name like concat('%', #{venueName}, '%')
+            </if>
+            <if test="status != null and status != ''">
+                AND status = #{status}
+            </if>
+        </where>
+    </select>
+
+    <insert id="insertBizPerformanceSession" parameterType="com.ruoyi.ticket.domain.BizPerformanceSession" useGeneratedKeys="true" keyProperty="sessionId">
+        insert into biz_performance_session
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="performanceId != null">performance_id,</if>
+            <if test="venueName != null and venueName != ''">venue_name,</if>
+            <if test="startTime != null">start_time,</if>
+            <if test="saleStartTime != null">sale_start_time,</if>
+            <if test="status != null">status,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="performanceId != null">#{performanceId},</if>
+            <if test="venueName != null and venueName != ''">#{venueName},</if>
+            <if test="startTime != null">#{startTime},</if>
+            <if test="saleStartTime != null">#{saleStartTime},</if>
+            <if test="status != null">#{status},</if>
+        </trim>
+    </insert>
+
+    <update id="updateBizPerformanceSession" parameterType="com.ruoyi.ticket.domain.BizPerformanceSession">
+        update biz_performance_session
+        <set>
+            <if test="performanceId != null">performance_id = #{performanceId},</if>
+            <if test="venueName != null and venueName != ''">venue_name = #{venueName},</if>
+            <if test="startTime != null">start_time = #{startTime},</if>
+            <if test="saleStartTime != null">sale_start_time = #{saleStartTime},</if>
+            <if test="status != null">status = #{status},</if>
+        </set>
+        where session_id = #{sessionId}
+    </update>
+
+    <delete id="deleteBizPerformanceSessionById" parameterType="Long">
+        delete from biz_performance_session where session_id = #{sessionId}
+    </delete>
+
+    <delete id="deleteBizPerformanceSessionByIds" parameterType="Long">
+        delete from biz_performance_session where session_id in
+        <foreach item="sessionId" collection="array" open="(" separator="," close=")">
+            #{sessionId}
+        </foreach>
+    </delete>
+
+</mapper>

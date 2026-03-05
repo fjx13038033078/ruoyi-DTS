@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.ticket.mapper.BizPointsRecordMapper">
+
+    <resultMap type="com.ruoyi.ticket.domain.BizPointsRecord" id="BizPointsRecordResult">
+        <id     property="recordId"       column="record_id"       />
+        <result property="userId"         column="user_id"         />
+        <result property="itemId"         column="item_id"         />
+        <result property="pointsDeducted"  column="points_deducted" />
+        <result property="createTime"      column="create_time"     />
+    </resultMap>
+
+    <sql id="selectBizPointsRecordVo">
+        select record_id, user_id, item_id, points_deducted, create_time
+        from biz_points_record
+    </sql>
+
+    <select id="selectBizPointsRecordById" parameterType="Long" resultMap="BizPointsRecordResult">
+        <include refid="selectBizPointsRecordVo"/>
+        where record_id = #{recordId}
+    </select>
+
+    <select id="selectBizPointsRecordList" parameterType="com.ruoyi.ticket.domain.BizPointsRecord" resultMap="BizPointsRecordResult">
+        <include refid="selectBizPointsRecordVo"/>
+        <where>
+            <if test="userId != null">
+                AND user_id = #{userId}
+            </if>
+            <if test="itemId != null">
+                AND item_id = #{itemId}
+            </if>
+        </where>
+    </select>
+
+    <insert id="insertBizPointsRecord" parameterType="com.ruoyi.ticket.domain.BizPointsRecord" useGeneratedKeys="true" keyProperty="recordId">
+        insert into biz_points_record
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="userId != null">user_id,</if>
+            <if test="itemId != null">item_id,</if>
+            <if test="pointsDeducted != null">points_deducted,</if>
+            create_time
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="userId != null">#{userId},</if>
+            <if test="itemId != null">#{itemId},</if>
+            <if test="pointsDeducted != null">#{pointsDeducted},</if>
+            sysdate()
+        </trim>
+    </insert>
+
+    <update id="updateBizPointsRecord" parameterType="com.ruoyi.ticket.domain.BizPointsRecord">
+        update biz_points_record
+        <set>
+            <if test="userId != null">user_id = #{userId},</if>
+            <if test="itemId != null">item_id = #{itemId},</if>
+            <if test="pointsDeducted != null">points_deducted = #{pointsDeducted},</if>
+        </set>
+        where record_id = #{recordId}
+    </update>
+
+    <delete id="deleteBizPointsRecordById" parameterType="Long">
+        delete from biz_points_record where record_id = #{recordId}
+    </delete>
+
+    <delete id="deleteBizPointsRecordByIds" parameterType="Long">
+        delete from biz_points_record where record_id in
+        <foreach item="recordId" collection="array" open="(" separator="," close=")">
+            #{recordId}
+        </foreach>
+    </delete>
+
+</mapper>

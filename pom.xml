@@ -170,6 +170,13 @@
                 <version>${ruoyi.version}</version>
             </dependency>
 
+            <!-- 票务模块-->
+            <dependency>
+                <groupId>com.ruoyi</groupId>
+                <artifactId>ruoyi-ticket</artifactId>
+                <version>${ruoyi.version}</version>
+            </dependency>
+
         </dependencies>
     </dependencyManagement>
 
@@ -178,6 +185,7 @@
         <module>ruoyi-framework</module>
         <module>ruoyi-system</module>
         <module>ruoyi-common</module>
+        <module>ruoyi-ticket</module>
     </modules>
     <packaging>pom</packaging>
 

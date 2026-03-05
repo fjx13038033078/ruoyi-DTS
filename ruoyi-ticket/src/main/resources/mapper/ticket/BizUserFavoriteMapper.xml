@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.ticket.mapper.BizUserFavoriteMapper">
+
+    <resultMap type="com.ruoyi.ticket.domain.BizUserFavorite" id="BizUserFavoriteResult">
+        <id     property="favoriteId"    column="favorite_id"    />
+        <result property="userId"        column="user_id"        />
+        <result property="performanceId"  column="performance_id"  />
+        <result property="createTime"     column="create_time"     />
+    </resultMap>
+
+    <sql id="selectBizUserFavoriteVo">
+        select favorite_id, user_id, performance_id, create_time
+        from biz_user_favorite
+    </sql>
+
+    <select id="selectBizUserFavoriteById" parameterType="Long" resultMap="BizUserFavoriteResult">
+        <include refid="selectBizUserFavoriteVo"/>
+        where favorite_id = #{favoriteId}
+    </select>
+
+    <select id="selectBizUserFavoriteList" parameterType="com.ruoyi.ticket.domain.BizUserFavorite" resultMap="BizUserFavoriteResult">
+        <include refid="selectBizUserFavoriteVo"/>
+        <where>
+            <if test="userId != null">
+                AND user_id = #{userId}
+            </if>
+            <if test="performanceId != null">
+                AND performance_id = #{performanceId}
+            </if>
+        </where>
+    </select>
+
+    <insert id="insertBizUserFavorite" parameterType="com.ruoyi.ticket.domain.BizUserFavorite" useGeneratedKeys="true" keyProperty="favoriteId">
+        insert into biz_user_favorite
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="userId != null">user_id,</if>
+            <if test="performanceId != null">performance_id,</if>
+            create_time
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="userId != null">#{userId},</if>
+            <if test="performanceId != null">#{performanceId},</if>
+            sysdate()
+        </trim>
+    </insert>
+
+    <update id="updateBizUserFavorite" parameterType="com.ruoyi.ticket.domain.BizUserFavorite">
+        update biz_user_favorite
+        <set>
+            <if test="userId != null">user_id = #{userId},</if>
+            <if test="performanceId != null">performance_id = #{performanceId},</if>
+        </set>
+        where favorite_id = #{favoriteId}
+    </update>
+
+    <delete id="deleteBizUserFavoriteById" parameterType="Long">
+        delete from biz_user_favorite where favorite_id = #{favoriteId}
+    </delete>
+
+    <delete id="deleteBizUserFavoriteByIds" parameterType="Long">
+        delete from biz_user_favorite where favorite_id in
+        <foreach item="favoriteId" collection="array" open="(" separator="," close=")">
+            #{favoriteId}
+        </foreach>
+    </delete>
+
+</mapper>
