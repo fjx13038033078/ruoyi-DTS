@@ -89,6 +89,18 @@ export const constantRoutes = [
         meta: { title: '选座购票' }
       },
       {
+        path: 'performance',
+        component: () => import('@/views/front/performance/FrontPerformanceList'),
+        name: 'FrontPerformanceList',
+        meta: { title: '演出列表' }
+      },
+      {
+        path: 'points',
+        component: () => import('@/views/front/points/PointsMall'),
+        name: 'PointsMall',
+        meta: { title: '积分商城' }
+      },
+      {
         path: 'profile',
         component: () => import('@/views/front/profile/FrontProfile'),
         name: 'FrontProfile',

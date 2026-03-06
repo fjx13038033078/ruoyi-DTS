@@ -25,6 +25,18 @@
             <artifactId>ruoyi-common</artifactId>
         </dependency>
 
+        <!-- 系统模块（用户积分校验与扣减） -->
+        <dependency>
+            <groupId>com.ruoyi</groupId>
+            <artifactId>ruoyi-system</artifactId>
+        </dependency>
+
+        <!-- 系统模块（用户积分校验与扣减） -->
+        <dependency>
+            <groupId>com.ruoyi</groupId>
+            <artifactId>ruoyi-system</artifactId>
+        </dependency>
+
         <!-- Lombok -->
         <dependency>
             <groupId>org.projectlombok</groupId>

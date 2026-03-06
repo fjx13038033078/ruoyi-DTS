@@ -4,14 +4,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.core.page.TableDataInfo;
-import com.ruoyi.common.core.domain.entity.SysUser;
-import com.ruoyi.system.service.ISysUserService;
 import com.ruoyi.ticket.domain.*;
 import com.ruoyi.ticket.service.*;
 
@@ -31,7 +28,6 @@ public class FrontTicketController extends BaseController {
     private final IBizUserFavoriteService bizUserFavoriteService;
     private final IBizPointsItemService bizPointsItemService;
     private final IBizPointsRecordService bizPointsRecordService;
-    private final ISysUserService sysUserService;
     private final IOrderPlacementService orderPlacementService;
     private final IBizOrderService bizOrderService;
 
@@ -41,7 +37,6 @@ public class FrontTicketController extends BaseController {
                                  IBizUserFavoriteService bizUserFavoriteService,
                                  IBizPointsItemService bizPointsItemService,
                                  IBizPointsRecordService bizPointsRecordService,
-                                 ISysUserService sysUserService,
                                  IOrderPlacementService orderPlacementService,
                                  IBizOrderService bizOrderService) {
         this.bizPerformanceService = bizPerformanceService;
@@ -50,7 +45,6 @@ public class FrontTicketController extends BaseController {
         this.bizUserFavoriteService = bizUserFavoriteService;
         this.bizPointsItemService = bizPointsItemService;
         this.bizPointsRecordService = bizPointsRecordService;
-        this.sysUserService = sysUserService;
         this.orderPlacementService = orderPlacementService;
         this.bizOrderService = bizOrderService;
     }
@@ -156,40 +150,34 @@ public class FrontTicketController extends BaseController {
     }
 
     /**
+     * 获取上架的积分兑换商品列表
+     */
+    @GetMapping("/points/item/list")
+    public TableDataInfo listPointsItems(BizPointsItem query) {
+        query.setStatus("1");
+        startPage();
+        List<BizPointsItem> list = bizPointsItemService.selectBizPointsItemList(query);
+        return getDataTable(list);
+    }
+
+    /**
+     * 获取当前用户的积分兑换记录
+     */
+    @GetMapping("/points/record/list")
+    public TableDataInfo listMyPointsRecords(BizPointsRecord query) {
+        query.setUserId(getUserId());
+        startPage();
+        List<BizPointsRecord> list = bizPointsRecordService.selectBizPointsRecordList(query);
+        return getDataTable(list);
+    }
+
+    /**
      * 积分兑换：扣减用户积分并增加兑换记录
      */
     @PostMapping("/points/exchange")
-    @Transactional(rollbackFor = Exception.class)
     public AjaxResult exchangePoints(@RequestParam Long itemId) {
         Long userId = getUserId();
-        BizPointsItem item = bizPointsItemService.selectBizPointsItemById(itemId);
-        if (item == null) {
-            return error("兑换商品不存在");
-        }
-        if (!"1".equals(item.getStatus())) {
-            return error("商品已下架");
-        }
-        if (item.getStock() == null || item.getStock() <= 0) {
-            return error("库存不足");
-        }
-        Integer pointsRequired = item.getPointsRequired();
-        if (pointsRequired == null || pointsRequired <= 0) {
-            return error("商品配置异常");
-        }
-        SysUser user = sysUserService.selectUserById(userId);
-        if (user == null || user.getPoints() == null || user.getPoints() < pointsRequired) {
-            return error("积分不足");
-        }
-        if (!sysUserService.deductPoints(userId, pointsRequired)) {
-            return error("积分扣减失败，请重试");
-        }
-        item.setStock(item.getStock() - 1);
-        bizPointsItemService.updateBizPointsItem(item);
-        BizPointsRecord record = new BizPointsRecord();
-        record.setUserId(userId);
-        record.setItemId(itemId);
-        record.setPointsDeducted(pointsRequired);
-        bizPointsRecordService.insertBizPointsRecord(record);
+        bizPointsItemService.exchangeItem(userId, itemId);
         return success("兑换成功");
     }
 }

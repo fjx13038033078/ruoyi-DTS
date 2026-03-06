@@ -10,6 +10,12 @@
           <router-link to="/front" class="nav-item" exact>
             <i class="el-icon-s-home"></i> 首页
           </router-link>
+          <router-link to="/front/performance" class="nav-item">
+            <i class="el-icon-video-play"></i> 演出列表
+          </router-link>
+          <router-link to="/front/points" class="nav-item" v-if="isLogin">
+            <i class="el-icon-coin"></i> 积分商城
+          </router-link>
           <router-link to="/front/profile" class="nav-item" v-if="isLogin">
             <i class="el-icon-user"></i> 个人中心
           </router-link>

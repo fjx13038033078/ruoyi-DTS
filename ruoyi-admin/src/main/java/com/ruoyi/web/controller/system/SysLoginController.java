@@ -16,6 +16,7 @@ import com.ruoyi.common.utils.SecurityUtils;
 import com.ruoyi.framework.web.service.SysLoginService;
 import com.ruoyi.framework.web.service.SysPermissionService;
 import com.ruoyi.system.service.ISysMenuService;
+import com.ruoyi.system.service.ISysUserService;
 
 /**
  * 登录验证
@@ -33,6 +34,9 @@ public class SysLoginController
 
     @Autowired
     private SysPermissionService permissionService;
+
+    @Autowired
+    private ISysUserService userService;
 
     /**
      * 登录方法
@@ -60,6 +64,11 @@ public class SysLoginController
     public AjaxResult getInfo()
     {
         SysUser user = SecurityUtils.getLoginUser().getUser();
+        // 从数据库重新获取用户信息，确保积分等字段为最新
+        SysUser freshUser = userService.selectUserById(user.getUserId());
+        if (freshUser != null) {
+            user = freshUser;
+        }
         // 角色集合
         Set<String> roles = permissionService.getRolePermission(user);
         // 权限集合

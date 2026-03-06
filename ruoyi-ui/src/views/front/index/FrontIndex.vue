@@ -44,6 +44,7 @@
           <i class="el-icon-video-play"></i>
           热门演出
         </h2>
+        <router-link to="/front/performance" class="view-all">查看全部</router-link>
       </div>
       <div class="performance-list" v-loading="loading">
         <template v-if="performanceList.length > 0">
@@ -111,7 +112,8 @@ export default {
       listPerformance({
         pageNum: 1,
         pageSize: 12,
-        status: '1'
+        status: '1',
+        isRecommend: '1'
       }).then(res => {
         this.performanceList = res.rows || []
         this.loading = false
@@ -163,6 +165,9 @@ export default {
 
   .section-header {
     margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
     .section-title {
       font-size: 20px;
       color: #333;
@@ -170,6 +175,14 @@ export default {
       display: flex;
       align-items: center;
       gap: 8px;
+    }
+    .view-all {
+      font-size: 14px;
+      color: #3949ab;
+      text-decoration: none;
+      &:hover {
+        text-decoration: underline;
+      }
     }
   }
 

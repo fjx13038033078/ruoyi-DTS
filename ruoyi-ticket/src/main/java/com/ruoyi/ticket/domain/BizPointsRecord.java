@@ -30,4 +30,7 @@ public class BizPointsRecord extends BaseEntity
     /** 本次扣除的积分 */
     @Excel(name = "扣除积分")
     private Integer pointsDeducted;
+
+    /** 商品名称（关联查询，非表字段） */
+    private String itemName;
 }

@@ -10,11 +10,18 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="itemId"         column="item_id"         />
         <result property="pointsDeducted"  column="points_deducted" />
         <result property="createTime"      column="create_time"     />
+        <result property="itemName"       column="item_name"       />
     </resultMap>
 
     <sql id="selectBizPointsRecordVo">
         select record_id, user_id, item_id, points_deducted, create_time
         from biz_points_record
+    </sql>
+
+    <sql id="selectBizPointsRecordVoWithItem">
+        select r.record_id, r.user_id, r.item_id, r.points_deducted, r.create_time, i.name as item_name
+        from biz_points_record r
+        left join biz_points_item i on r.item_id = i.item_id
     </sql>
 
     <select id="selectBizPointsRecordById" parameterType="Long" resultMap="BizPointsRecordResult">
@@ -23,15 +30,16 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </select>
 
     <select id="selectBizPointsRecordList" parameterType="com.ruoyi.ticket.domain.BizPointsRecord" resultMap="BizPointsRecordResult">
-        <include refid="selectBizPointsRecordVo"/>
+        <include refid="selectBizPointsRecordVoWithItem"/>
         <where>
             <if test="userId != null">
-                AND user_id = #{userId}
+                AND r.user_id = #{userId}
             </if>
             <if test="itemId != null">
-                AND item_id = #{itemId}
+                AND r.item_id = #{itemId}
             </if>
         </where>
+        order by r.create_time desc
     </select>
 
     <insert id="insertBizPointsRecord" parameterType="com.ruoyi.ticket.domain.BizPointsRecord" useGeneratedKeys="true" keyProperty="recordId">

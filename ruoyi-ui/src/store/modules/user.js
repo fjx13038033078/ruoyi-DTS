@@ -8,7 +8,8 @@ const user = {
     name: '',
     avatar: '',
     roles: [],
-    permissions: []
+    permissions: [],
+    points: null
   },
 
   mutations: {
@@ -29,6 +30,9 @@ const user = {
     },
     SET_PERMISSIONS: (state, permissions) => {
       state.permissions = permissions
+    },
+    SET_POINTS: (state, points) => {
+      state.points = points
     }
   },
 
@@ -65,6 +69,7 @@ const user = {
           commit('SET_ID', user.userId)
           commit('SET_NAME', user.userName)
           commit('SET_AVATAR', avatar)
+          commit('SET_POINTS', user.points != null ? user.points : 0)
           resolve(res)
         }).catch(error => {
           reject(error)

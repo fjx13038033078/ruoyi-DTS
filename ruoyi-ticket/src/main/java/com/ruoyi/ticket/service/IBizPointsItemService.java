@@ -57,4 +57,14 @@ public interface IBizPointsItemService
      * @return 结果
      */
     int deleteBizPointsItemById(Long itemId);
+
+    /**
+     * 积分兑换商品
+     * 校验用户、商品、积分、库存后扣减积分与库存，并插入兑换流水
+     *
+     * @param userId 用户ID
+     * @param itemId 商品ID
+     * @throws com.ruoyi.common.exception.ServiceException 校验失败或业务异常时抛出
+     */
+    void exchangeItem(Long userId, Long itemId);
 }
