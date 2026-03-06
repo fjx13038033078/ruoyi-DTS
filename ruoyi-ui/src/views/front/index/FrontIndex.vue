@@ -7,6 +7,37 @@
       </div>
     </section>
 
+    <section class="notice-section">
+      <div class="section-header">
+        <h2 class="section-title">
+          <i class="el-icon-bell"></i>
+          通知公告
+        </h2>
+      </div>
+      <div class="notice-box" v-loading="noticeLoading">
+        <template v-if="noticeList.length > 0">
+          <ul class="notice-list">
+            <li
+              v-for="item in noticeList"
+              :key="item.noticeId"
+              class="notice-item"
+              @click="showNoticeContent(item)"
+            >
+              <span class="notice-title">{{ item.noticeTitle }}</span>
+              <dict-tag :options="dict.type.sys_notice_type" :value="item.noticeType" />
+              <span class="notice-time">{{ parseTime(item.createTime, '{m}-{d}') }}</span>
+            </li>
+          </ul>
+        </template>
+        <template v-else-if="!noticeLoading">
+          <div class="notice-empty">
+            <i class="el-icon-document"></i>
+            <p>暂无公告</p>
+          </div>
+        </template>
+      </div>
+    </section>
+
     <section class="performance-section">
       <div class="section-header">
         <h2 class="section-title">
@@ -45,22 +76,34 @@
         </template>
       </div>
     </section>
+
+    <el-dialog :title="selectedNotice.title" :visible.sync="showNoticeDialog" width="640px" append-to-body>
+      <div v-html="selectedNotice.content" class="notice-content"></div>
+    </el-dialog>
   </div>
 </template>
 
 <script>
+import { parseTime } from '@/utils/ruoyi'
 import { listPerformance } from '@/api/front/ticket'
+import { getNotice, listNotice } from '@/api/system/notice'
 
 export default {
   name: 'FrontIndex',
+  dicts: ['sys_notice_type'],
   data() {
     return {
       loading: false,
-      performanceList: []
+      performanceList: [],
+      noticeLoading: false,
+      noticeList: [],
+      selectedNotice: { title: '', content: '' },
+      showNoticeDialog: false
     }
   },
   created() {
     this.loadPerformances()
+    this.loadNoticeList()
   },
   methods: {
     loadPerformances() {
@@ -78,7 +121,22 @@ export default {
     },
     goDetail(performanceId) {
       this.$router.push({ path: '/front/detail/' + performanceId })
-    }
+    },
+    loadNoticeList() {
+      this.noticeLoading = true
+      listNotice({ pageNum: 1, pageSize: 8 }).then(res => {
+        this.noticeList = res.rows || []
+        this.noticeLoading = false
+      }).catch(() => { this.noticeLoading = false })
+    },
+    showNoticeContent(row) {
+      getNotice(row.noticeId).then(res => {
+        this.selectedNotice.title = res.data.noticeTitle
+        this.selectedNotice.content = res.data.noticeContent
+        this.showNoticeDialog = true
+      })
+    },
+    parseTime
   }
 }
 </script>
@@ -187,5 +245,68 @@ export default {
       margin-bottom: 12px;
     }
   }
+
+  .notice-section {
+    margin-bottom: 30px;
+  }
+
+  .notice-box {
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+    padding: 16px;
+  }
+
+  .notice-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .notice-item {
+    display: flex;
+    align-items: center;
+    padding: 12px 0;
+    border-bottom: 1px solid #f0f0f0;
+    cursor: pointer;
+    font-size: 14px;
+    transition: color 0.2s ease;
+    &:last-child {
+      border-bottom: none;
+    }
+    &:hover {
+      color: #3949ab;
+    }
+    .notice-title {
+      flex: 1;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .notice-time {
+      color: #999;
+      margin-left: 12px;
+      flex-shrink: 0;
+      font-size: 13px;
+    }
+  }
+
+  .notice-empty {
+    text-align: center;
+    padding: 40px 20px;
+    color: #999;
+    i {
+      font-size: 48px;
+      display: block;
+      margin-bottom: 12px;
+    }
+  }
+}
+
+.notice-content::v-deep img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+  margin: 0 auto;
 }
 </style>

@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import com.ruoyi.common.annotation.Anonymous;
 import com.ruoyi.common.annotation.Log;
 import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.domain.AjaxResult;
@@ -33,8 +34,9 @@ public class SysNoticeController extends BaseController
     private ISysNoticeService noticeService;
 
     /**
-     * 获取通知公告列表
+     * 获取通知公告列表（用户端首页可匿名访问）
      */
+    @Anonymous
 //    @PreAuthorize("@ss.hasPermi('system:notice:list')")
     @GetMapping("/list")
     public TableDataInfo list(SysNotice notice)
@@ -45,9 +47,9 @@ public class SysNoticeController extends BaseController
     }
 
     /**
-     * 根据通知公告编号获取详细信息
+     * 根据通知公告编号获取详细信息（用户端可匿名访问）
      */
-    @PreAuthorize("@ss.hasPermi('system:notice:query')")
+    @Anonymous
     @GetMapping(value = "/{noticeId}")
     public AjaxResult getInfo(@PathVariable Long noticeId)
     {
