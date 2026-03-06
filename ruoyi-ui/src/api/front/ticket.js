@@ -46,6 +46,50 @@ export function listMyOrders(query) {
   })
 }
 
+// 前台：我的收藏列表（含演出详情）
+export function listMyFavorites(query) {
+  return request({
+    url: '/front/ticket/favorite/list',
+    method: 'get',
+    params: query
+  })
+}
+
+// 前台：检查是否已收藏
+export function checkFavorite(performanceId) {
+  return request({
+    url: '/front/ticket/favorite/check',
+    method: 'get',
+    params: { performanceId }
+  })
+}
+
+// 前台：获取当前用户已收藏的演出ID列表
+export function getMyFavoriteIds() {
+  return request({
+    url: '/front/ticket/favorite/ids',
+    method: 'get'
+  })
+}
+
+// 前台：收藏剧目
+export function addFavorite(performanceId) {
+  return request({
+    url: '/front/ticket/favorite/add',
+    method: 'post',
+    params: { performanceId }
+  })
+}
+
+// 前台：取消收藏
+export function removeFavorite(performanceId) {
+  return request({
+    url: '/front/ticket/favorite/remove',
+    method: 'post',
+    params: { performanceId }
+  })
+}
+
 // 发起支付宝支付（返回 HTML 表单，responseType: 'text'）
 export function alipayPay(orderNo) {
   return request({

@@ -6,6 +6,8 @@ import java.util.Map;
 
 import org.springframework.web.bind.annotation.*;
 
+import com.github.pagehelper.PageInfo;
+import com.ruoyi.common.constant.HttpStatus;
 import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.core.page.TableDataInfo;
@@ -115,6 +117,56 @@ public class FrontTicketController extends BaseController {
         startPage();
         List<BizOrder> list = bizOrderService.selectBizOrderList(query);
         return getDataTable(list);
+    }
+
+    /**
+     * 获取当前用户的收藏列表（含演出详情）
+     */
+    @GetMapping("/favorite/list")
+    public TableDataInfo listMyFavorites() {
+        BizUserFavorite query = new BizUserFavorite();
+        query.setUserId(getUserId());
+        startPage();
+        List<BizUserFavorite> list = bizUserFavoriteService.selectBizUserFavoriteList(query);
+        List<BizPerformance> performances = new java.util.ArrayList<>(list.size());
+        for (BizUserFavorite f : list) {
+            BizPerformance p = bizPerformanceService.selectBizPerformanceById(f.getPerformanceId());
+            if (p != null) {
+                performances.add(p);
+            }
+        }
+        PageInfo<BizUserFavorite> pageInfo = new PageInfo<>(list);
+        TableDataInfo rspData = new TableDataInfo();
+        rspData.setCode(HttpStatus.SUCCESS);
+        rspData.setMsg("查询成功");
+        rspData.setRows(performances);
+        rspData.setTotal(pageInfo.getTotal());
+        return rspData;
+    }
+
+    /**
+     * 检查当前用户是否已收藏某演出
+     */
+    @GetMapping("/favorite/check")
+    public AjaxResult checkFavorite(@RequestParam Long performanceId) {
+        Long userId = getUserId();
+        BizUserFavorite query = new BizUserFavorite();
+        query.setUserId(userId);
+        query.setPerformanceId(performanceId);
+        List<BizUserFavorite> list = bizUserFavoriteService.selectBizUserFavoriteList(query);
+        return success(!list.isEmpty());
+    }
+
+    /**
+     * 获取当前用户已收藏的演出ID列表（用于列表页批量展示收藏状态）
+     */
+    @GetMapping("/favorite/ids")
+    public AjaxResult getMyFavoriteIds() {
+        BizUserFavorite query = new BizUserFavorite();
+        query.setUserId(getUserId());
+        List<BizUserFavorite> list = bizUserFavoriteService.selectBizUserFavoriteList(query);
+        List<Long> ids = list.stream().map(BizUserFavorite::getPerformanceId).collect(java.util.stream.Collectors.toList());
+        return success(ids);
     }
 
     /**

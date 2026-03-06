@@ -107,6 +107,12 @@ export const constantRoutes = [
         meta: { title: '个人中心' }
       },
       {
+        path: 'settings',
+        component: () => import('@/views/front/profile/FrontProfileSettings'),
+        name: 'FrontProfileSettings',
+        meta: { title: '账号设置' }
+      },
+      {
         path: 'pay-success',
         component: () => import('@/views/front/PaySuccess'),
         name: 'PaySuccess',

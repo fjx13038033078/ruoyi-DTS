@@ -9,20 +9,28 @@
     <div class="performance-list" v-loading="loading">
       <template v-if="performanceList.length > 0">
         <div class="performance-grid">
-          <div
-            v-for="item in performanceList"
-            :key="item.performanceId"
-            class="performance-card"
-            @click="goDetail(item.performanceId)"
-          >
-            <div class="card-poster">
-              <image-preview v-if="item.posterUrl" :src="item.posterUrl" :width="220" :height="160" />
-              <div v-else class="poster-placeholder">
-                <i class="el-icon-video-play"></i>
-                <span>暂无海报</span>
+            <div
+              v-for="item in performanceList"
+              :key="item.performanceId"
+              class="performance-card"
+              @click="goDetail(item.performanceId)"
+            >
+              <div class="card-poster">
+                <image-preview v-if="item.posterUrl" :src="item.posterUrl" :width="220" :height="160" />
+                <div v-else class="poster-placeholder">
+                  <i class="el-icon-video-play"></i>
+                  <span>暂无海报</span>
+                </div>
+                <div v-if="item.isRecommend === '1'" class="card-badge">推荐</div>
+                <div
+                  v-if="isLogin"
+                  class="card-favorite"
+                  :class="{ favorited: favoritedIds.includes(item.performanceId) }"
+                  @click.stop="toggleFavorite(item)"
+                >
+                  <i :class="favoritedIds.includes(item.performanceId) ? 'el-icon-star-on' : 'el-icon-star-off'"></i>
+                </div>
               </div>
-              <div v-if="item.isRecommend === '1'" class="card-badge">推荐</div>
-            </div>
             <div class="card-info">
               <h3 class="card-title">{{ item.title }}</h3>
             </div>
@@ -48,7 +56,7 @@
 </template>
 
 <script>
-import { listPerformance } from '@/api/front/ticket'
+import { listPerformance, getMyFavoriteIds, addFavorite, removeFavorite } from '@/api/front/ticket'
 
 export default {
   name: 'FrontPerformanceList',
@@ -56,6 +64,7 @@ export default {
     return {
       loading: false,
       performanceList: [],
+      favoritedIds: [],
       total: 0,
       queryParams: {
         pageNum: 1,
@@ -64,8 +73,14 @@ export default {
       }
     }
   },
+  computed: {
+    isLogin() {
+      return this.$store.getters.token
+    }
+  },
   created() {
     this.getList()
+    if (this.isLogin) this.loadFavoriteIds()
   },
   methods: {
     getList() {
@@ -80,6 +95,24 @@ export default {
     },
     goDetail(performanceId) {
       this.$router.push({ path: '/front/detail/' + performanceId })
+    },
+    loadFavoriteIds() {
+      getMyFavoriteIds().then(res => {
+        this.favoritedIds = res.data || []
+      }).catch(() => {})
+    },
+    toggleFavorite(item) {
+      if (!this.isLogin) return
+      const isFav = this.favoritedIds.includes(item.performanceId)
+      const api = isFav ? removeFavorite : addFavorite
+      api(item.performanceId).then(() => {
+        if (isFav) {
+          this.favoritedIds = this.favoritedIds.filter(id => id !== item.performanceId)
+        } else {
+          this.favoritedIds = [...this.favoritedIds, item.performanceId]
+        }
+        this.$message.success(isFav ? '已取消收藏' : '收藏成功')
+      }).catch(() => {})
     }
   }
 }
@@ -143,6 +176,23 @@ export default {
         font-size: 12px;
         padding: 2px 8px;
         border-radius: 4px;
+      }
+      .card-favorite {
+        position: absolute;
+        top: 8px;
+        left: 8px;
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        background: rgba(0, 0, 0, 0.4);
+        color: #fff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        font-size: 18px;
+        &:hover { background: rgba(0, 0, 0, 0.6); }
+        &.favorited { color: #ffc107; }
       }
     }
     .card-info {

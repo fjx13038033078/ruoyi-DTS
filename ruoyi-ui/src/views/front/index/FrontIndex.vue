@@ -62,6 +62,14 @@
                   <span>暂无海报</span>
                 </div>
                 <div v-if="item.isRecommend === '1'" class="card-badge">推荐</div>
+                <div
+                  v-if="isLogin"
+                  class="card-favorite"
+                  :class="{ favorited: favoritedIds.includes(item.performanceId) }"
+                  @click.stop="toggleFavorite(item)"
+                >
+                  <i :class="favoritedIds.includes(item.performanceId) ? 'el-icon-star-on' : 'el-icon-star-off'"></i>
+                </div>
               </div>
               <div class="card-info">
                 <h3 class="card-title">{{ item.title }}</h3>
@@ -86,7 +94,7 @@
 
 <script>
 import { parseTime } from '@/utils/ruoyi'
-import { listPerformance } from '@/api/front/ticket'
+import { listPerformance, getMyFavoriteIds, addFavorite, removeFavorite } from '@/api/front/ticket'
 import { getNotice, listNotice } from '@/api/system/notice'
 
 export default {
@@ -96,15 +104,22 @@ export default {
     return {
       loading: false,
       performanceList: [],
+      favoritedIds: [],
       noticeLoading: false,
       noticeList: [],
       selectedNotice: { title: '', content: '' },
       showNoticeDialog: false
     }
   },
+  computed: {
+    isLogin() {
+      return this.$store.getters.token
+    }
+  },
   created() {
     this.loadPerformances()
     this.loadNoticeList()
+    if (this.isLogin) this.loadFavoriteIds()
   },
   methods: {
     loadPerformances() {
@@ -123,6 +138,24 @@ export default {
     },
     goDetail(performanceId) {
       this.$router.push({ path: '/front/detail/' + performanceId })
+    },
+    loadFavoriteIds() {
+      getMyFavoriteIds().then(res => {
+        this.favoritedIds = res.data || []
+      }).catch(() => {})
+    },
+    toggleFavorite(item) {
+      if (!this.isLogin) return
+      const isFav = this.favoritedIds.includes(item.performanceId)
+      const api = isFav ? removeFavorite : addFavorite
+      api(item.performanceId).then(() => {
+        if (isFav) {
+          this.favoritedIds = this.favoritedIds.filter(id => id !== item.performanceId)
+        } else {
+          this.favoritedIds = [...this.favoritedIds, item.performanceId]
+        }
+        this.$message.success(isFav ? '已取消收藏' : '收藏成功')
+      }).catch(() => {})
     },
     loadNoticeList() {
       this.noticeLoading = true
@@ -230,6 +263,23 @@ export default {
         font-size: 12px;
         padding: 2px 8px;
         border-radius: 4px;
+      }
+      .card-favorite {
+        position: absolute;
+        top: 8px;
+        left: 8px;
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        background: rgba(0, 0, 0, 0.4);
+        color: #fff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        font-size: 18px;
+        &:hover { background: rgba(0, 0, 0, 0.6); }
+        &.favorited { color: #ffc107; }
       }
     }
     .card-info {

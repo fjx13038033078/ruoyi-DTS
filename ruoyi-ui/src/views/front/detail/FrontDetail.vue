@@ -12,7 +12,18 @@
           </div>
           <div class="info-wrap">
             <h1 class="title">{{ performance.title }}</h1>
-            <el-tag v-if="performance.isRecommend === '1'" type="danger" size="small">推荐</el-tag>
+            <div class="title-actions">
+              <el-tag v-if="performance.isRecommend === '1'" type="danger" size="small">推荐</el-tag>
+              <el-button
+                v-if="isLogin"
+                :type="isFavorited ? 'warning' : 'default'"
+                size="small"
+                :icon="isFavorited ? 'el-icon-star-on' : 'el-icon-star-off'"
+                @click="toggleFavorite"
+              >
+                {{ isFavorited ? '已收藏' : '收藏' }}
+              </el-button>
+            </div>
             <div v-if="performance.description" class="description">
               <h3>剧目简介</h3>
               <p>{{ performance.description }}</p>
@@ -54,7 +65,7 @@
 </template>
 
 <script>
-import { getPerformanceDetail } from '@/api/front/ticket'
+import { getPerformanceDetail, checkFavorite, addFavorite, removeFavorite } from '@/api/front/ticket'
 
 export default {
   name: 'FrontDetail',
@@ -64,14 +75,38 @@ export default {
       performanceId: null,
       performance: null,
       sessions: [],
-      selectedSession: null
+      selectedSession: null,
+      isFavorited: false
+    }
+  },
+  computed: {
+    isLogin() {
+      return this.$store.getters.token
     }
   },
   created() {
     this.performanceId = this.$route.params.id
     this.loadDetail()
+    if (this.isLogin) this.loadFavoriteStatus()
   },
   methods: {
+    loadFavoriteStatus() {
+      if (!this.performanceId) return
+      checkFavorite(this.performanceId).then(res => {
+        this.isFavorited = res.data === true
+      }).catch(() => {})
+    },
+    toggleFavorite() {
+      if (!this.isLogin) {
+        this.$message.warning('请先登录')
+        return
+      }
+      const api = this.isFavorited ? removeFavorite : addFavorite
+      api(this.performanceId).then(res => {
+        this.isFavorited = !this.isFavorited
+        this.$message.success(this.isFavorited ? '收藏成功' : '已取消收藏')
+      }).catch(() => {})
+    },
     loadDetail() {
       if (!this.performanceId) return
       this.loading = true
@@ -135,6 +170,11 @@ export default {
       font-size: 28px;
       margin: 0 0 16px 0;
       color: #1a237e;
+    }
+    .title-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
     }
     .description {
       margin-top: 24px;

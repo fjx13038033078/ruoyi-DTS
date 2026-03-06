@@ -32,6 +32,9 @@
                 <el-dropdown-item command="profile">
                   <i class="el-icon-user"></i> 个人中心
                 </el-dropdown-item>
+                <el-dropdown-item command="settings">
+                  <i class="el-icon-setting"></i> 账号设置
+                </el-dropdown-item>
                 <el-dropdown-item command="admin" v-if="isAdmin">
                   <i class="el-icon-setting"></i> 管理后台
                 </el-dropdown-item>
@@ -93,6 +96,9 @@ export default {
       switch (command) {
         case 'profile':
           this.$router.push('/front/profile')
+          break
+        case 'settings':
+          this.$router.push('/front/settings')
           break
         case 'admin':
           this.$router.push('/index')

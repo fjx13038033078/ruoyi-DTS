@@ -26,4 +26,7 @@ public class BizUserFavorite extends BaseEntity
     /** 演出的ID */
     @Excel(name = "演出ID")
     private Long performanceId;
+
+    /** 关联的演出信息（查询时填充，非表字段） */
+    private BizPerformance performance;
 }
