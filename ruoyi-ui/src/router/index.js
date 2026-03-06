@@ -28,6 +28,9 @@ import Layout from '@/layout'
   }
  */
 
+// 前台布局（用户端）
+const FrontLayout = () => import('@/views/front/layout/FrontLayout')
+
 // 公共路由
 export const constantRoutes = [
   {
@@ -60,6 +63,26 @@ export const constantRoutes = [
     path: '/401',
     component: () => import('@/views/error/401'),
     hidden: true
+  },
+  // 用户前端路由（观众端）
+  {
+    path: '/front',
+    component: FrontLayout,
+    hidden: true,
+    children: [
+      {
+        path: '',
+        component: () => import('@/views/front/index/FrontIndex'),
+        name: 'FrontIndex',
+        meta: { title: '票务首页' }
+      },
+      {
+        path: 'profile',
+        component: () => import('@/views/front/profile/FrontProfile'),
+        name: 'FrontProfile',
+        meta: { title: '个人中心' }
+      }
+    ]
   },
   {
     path: '',

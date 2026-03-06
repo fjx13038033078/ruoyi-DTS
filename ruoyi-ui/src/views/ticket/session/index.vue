@@ -271,6 +271,14 @@ export default {
         ],
         price: [
           { required: true, message: "请输入票价", trigger: "blur" }
+        ],
+        rows: [
+          { required: true, message: "请输入排数", trigger: "blur" },
+          { type: "number", min: 1, max: 50, message: "排数范围为 1-50", trigger: "blur" }
+        ],
+        cols: [
+          { required: true, message: "请输入每排座位数", trigger: "blur" },
+          { type: "number", min: 1, max: 100, message: "每排座位数范围为 1-100", trigger: "blur" }
         ]
       }
     };
@@ -396,6 +404,7 @@ export default {
           }).then(response => {
             this.$modal.msgSuccess(response.msg || "座位生成成功");
             this.seatConfigOpen = false;
+            this.getList(); // 提交后刷新场次列表
             this.seatSubmitLoading = false;
           }).catch(() => {
             this.seatSubmitLoading = false;
