@@ -33,6 +33,7 @@ public class FrontTicketController extends BaseController {
     private final IBizPointsRecordService bizPointsRecordService;
     private final ISysUserService sysUserService;
     private final IOrderPlacementService orderPlacementService;
+    private final IBizOrderService bizOrderService;
 
     public FrontTicketController(IBizPerformanceService bizPerformanceService,
                                  IBizPerformanceSessionService bizPerformanceSessionService,
@@ -41,7 +42,8 @@ public class FrontTicketController extends BaseController {
                                  IBizPointsItemService bizPointsItemService,
                                  IBizPointsRecordService bizPointsRecordService,
                                  ISysUserService sysUserService,
-                                 IOrderPlacementService orderPlacementService) {
+                                 IOrderPlacementService orderPlacementService,
+                                 IBizOrderService bizOrderService) {
         this.bizPerformanceService = bizPerformanceService;
         this.bizPerformanceSessionService = bizPerformanceSessionService;
         this.bizSessionSeatService = bizSessionSeatService;
@@ -50,6 +52,7 @@ public class FrontTicketController extends BaseController {
         this.bizPointsRecordService = bizPointsRecordService;
         this.sysUserService = sysUserService;
         this.orderPlacementService = orderPlacementService;
+        this.bizOrderService = bizOrderService;
     }
 
     /**
@@ -107,6 +110,17 @@ public class FrontTicketController extends BaseController {
         } catch (IllegalArgumentException | IllegalStateException e) {
             return error(e.getMessage());
         }
+    }
+
+    /**
+     * 我的订单列表（当前登录用户）
+     */
+    @GetMapping("/order/list")
+    public TableDataInfo listMyOrders(BizOrder query) {
+        query.setUserId(getUserId());
+        startPage();
+        List<BizOrder> list = bizOrderService.selectBizOrderList(query);
+        return getDataTable(list);
     }
 
     /**

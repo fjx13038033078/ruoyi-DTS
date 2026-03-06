@@ -136,7 +136,7 @@ alipay:
   # 异步通知地址（支付成功后支付宝服务器回调）
   notify-url: http://localhost/order/alipay/notify
   # 同步跳转地址（支付完成后浏览器跳转）
-  return-url: http://localhost/order/alipay/return
+  return-url: http://localhost:8080/order/alipay/return
   # 签名类型
   sign-type: RSA2
   # 字符编码

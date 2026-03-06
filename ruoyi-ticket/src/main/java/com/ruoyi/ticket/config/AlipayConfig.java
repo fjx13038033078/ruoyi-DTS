@@ -4,6 +4,9 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import com.alipay.api.AlipayClient;
+import com.alipay.api.DefaultAlipayClient;
+
 import lombok.Data;
 
 /**
@@ -19,6 +22,19 @@ public class AlipayConfig {
     @ConfigurationProperties(prefix = "alipay")
     public AlipayProperties alipayProperties() {
         return new AlipayProperties();
+    }
+
+    @Bean
+    public AlipayClient alipayClient(AlipayProperties props) {
+        return new DefaultAlipayClient(
+            props.getGatewayUrl(),
+            props.getAppId(),
+            props.getAppPrivateKey(),
+            "json",
+            props.getCharset(),
+            props.getAlipayPublicKey(),
+            props.getSignType()
+        );
     }
 
     /**

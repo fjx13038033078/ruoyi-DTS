@@ -42,11 +42,21 @@
         </el-button>
       </div>
     </div>
+
+    <el-dialog title="下单成功" :visible.sync="payDialogVisible" width="400px">
+      <p v-if="lastOrder">订单号：{{ lastOrder.orderNo }}</p>
+      <p v-if="lastOrder">金额：¥{{ lastOrder.totalAmount }}</p>
+      <p class="pay-tip">请尽快完成支付</p>
+      <span slot="footer">
+        <el-button @click="payDialogVisible = false">稍后支付</el-button>
+        <el-button type="primary" :loading="payLoading" @click="goPay">去支付</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
 <script>
-import { getSessionSeats, placeOrder } from '@/api/front/ticket'
+import { getSessionSeats, placeOrder, alipayPay } from '@/api/front/ticket'
 
 export default {
   name: 'FrontSeat',
@@ -56,7 +66,10 @@ export default {
       submitting: false,
       sessionId: null,
       seats: [],
-      selectedSeats: []
+      selectedSeats: [],
+      payDialogVisible: false,
+      lastOrder: null,
+      payLoading: false
     }
   },
   computed: {
@@ -137,11 +150,32 @@ export default {
       }
       this.submitting = true
       placeOrder(this.sessionId, this.selectedSeats.map(s => s.seatId)).then(res => {
-        this.$message.success('下单成功，请尽快完成支付')
         this.submitting = false
-        this.$router.push('/front')
+        this.lastOrder = res.data || res
+        this.payDialogVisible = true
       }).catch(() => {
         this.submitting = false
+      })
+    },
+    goPay() {
+      const orderNo = this.lastOrder && this.lastOrder.orderNo
+      if (!orderNo) return
+      this.payLoading = true
+      alipayPay(orderNo).then(html => {
+        this.payDialogVisible = false
+        this.payLoading = false
+        const div = document.createElement('div')
+        div.innerHTML = html
+        document.body.appendChild(div)
+        const form = div.querySelector('form')
+        if (form) {
+          form.submit()
+        } else {
+          document.body.removeChild(div)
+          this.$message.error('支付表单加载失败')
+        }
+      }).catch(() => {
+        this.payLoading = false
       })
     }
   }

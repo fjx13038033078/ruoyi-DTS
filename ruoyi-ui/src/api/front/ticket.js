@@ -36,3 +36,22 @@ export function placeOrder(sessionId, seatIds) {
     params
   })
 }
+
+// 前台：我的订单列表
+export function listMyOrders(query) {
+  return request({
+    url: '/front/ticket/order/list',
+    method: 'get',
+    params: query
+  })
+}
+
+// 发起支付宝支付（返回 HTML 表单，responseType: 'text'）
+export function alipayPay(orderNo) {
+  return request({
+    url: '/order/alipay/pay',
+    method: 'get',
+    params: { orderNo },
+    responseType: 'text'
+  })
+}

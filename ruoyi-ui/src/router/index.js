@@ -93,6 +93,12 @@ export const constantRoutes = [
         component: () => import('@/views/front/profile/FrontProfile'),
         name: 'FrontProfile',
         meta: { title: '个人中心' }
+      },
+      {
+        path: 'pay-success',
+        component: () => import('@/views/front/PaySuccess'),
+        name: 'PaySuccess',
+        meta: { title: '支付成功' }
       }
     ]
   },
