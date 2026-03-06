@@ -77,6 +77,18 @@ export const constantRoutes = [
         meta: { title: '票务首页' }
       },
       {
+        path: 'detail/:id',
+        component: () => import('@/views/front/detail/FrontDetail'),
+        name: 'FrontDetail',
+        meta: { title: '剧目详情' }
+      },
+      {
+        path: 'seat/:sessionId',
+        component: () => import('@/views/front/seat/FrontSeat'),
+        name: 'FrontSeat',
+        meta: { title: '选座购票' }
+      },
+      {
         path: 'profile',
         component: () => import('@/views/front/profile/FrontProfile'),
         name: 'FrontProfile',

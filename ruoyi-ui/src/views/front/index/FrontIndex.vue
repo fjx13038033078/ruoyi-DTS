@@ -21,22 +21,18 @@
               v-for="item in performanceList"
               :key="item.performanceId"
               class="performance-card"
+              @click="goDetail(item.performanceId)"
             >
               <div class="card-poster">
-                <image-preview v-if="item.posterUrl" :src="item.posterUrl" :width="200" :height="140" />
+                <image-preview v-if="item.posterUrl" :src="item.posterUrl" :width="220" :height="160" />
                 <div v-else class="poster-placeholder">
                   <i class="el-icon-video-play"></i>
                   <span>暂无海报</span>
                 </div>
+                <div v-if="item.isRecommend === '1'" class="card-badge">推荐</div>
               </div>
               <div class="card-info">
                 <h3 class="card-title">{{ item.title }}</h3>
-                <div class="card-meta">
-                  <el-tag v-if="item.isRecommend === '1'" type="danger" size="mini">推荐</el-tag>
-                  <el-tag :type="item.status === '1' ? 'success' : 'info'" size="mini">
-                    {{ item.status === '1' ? '上架' : '下架' }}
-                  </el-tag>
-                </div>
               </div>
             </div>
           </div>
@@ -53,7 +49,7 @@
 </template>
 
 <script>
-import { listPerformance } from '@/api/ticket/performance'
+import { listPerformance } from '@/api/front/ticket'
 
 export default {
   name: 'FrontIndex',
@@ -71,15 +67,17 @@ export default {
       this.loading = true
       listPerformance({
         pageNum: 1,
-        pageSize: 8,
-        status: '1',
-        isRecommend: undefined
+        pageSize: 12,
+        status: '1'
       }).then(res => {
         this.performanceList = res.rows || []
         this.loading = false
       }).catch(() => {
         this.loading = false
       })
+    },
+    goDetail(performanceId) {
+      this.$router.push({ path: '/front/detail/' + performanceId })
     }
   }
 }
@@ -119,34 +117,48 @@ export default {
 
   .performance-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-    gap: 20px;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 24px;
   }
 
   .performance-card {
     background: #fff;
-    border-radius: 8px;
+    border-radius: 12px;
     overflow: hidden;
-    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
-    transition: transform 0.2s;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+    transition: all 0.3s ease;
+    cursor: pointer;
     &:hover {
-      transform: translateY(-4px);
+      transform: translateY(-6px);
+      box-shadow: 0 8px 24px rgba(57, 73, 171, 0.2);
     }
     .card-poster {
-      height: 140px;
-      background: #f0f0f0;
+      position: relative;
+      height: 160px;
+      background: #e8eaf6;
       display: flex;
       align-items: center;
       justify-content: center;
+      overflow: hidden;
       .poster-placeholder {
-        color: #999;
+        color: #9fa8da;
         display: flex;
         flex-direction: column;
         align-items: center;
         gap: 8px;
         i {
-          font-size: 40px;
+          font-size: 48px;
         }
+      }
+      .card-badge {
+        position: absolute;
+        top: 8px;
+        right: 8px;
+        background: #f44336;
+        color: #fff;
+        font-size: 12px;
+        padding: 2px 8px;
+        border-radius: 4px;
       }
     }
     .card-info {
