@@ -90,4 +90,16 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         </foreach>
     </insert>
 
+    <select id="countValidTicketsByOrderId" resultType="int">
+        select count(*) from biz_order_ticket
+        where order_id = #{orderId} and status = '1'
+    </select>
+
+    <select id="countUserValidTicketsForSession" resultType="int">
+        select count(*) from biz_order_ticket t
+        inner join biz_order o on t.order_id = o.order_id
+        where o.user_id = #{userId} and o.session_id = #{sessionId}
+        and o.status in ('0', '1') and t.status = '1'
+    </select>
+
 </mapper>

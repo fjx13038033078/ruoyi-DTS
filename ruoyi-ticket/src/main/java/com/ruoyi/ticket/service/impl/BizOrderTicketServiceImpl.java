@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.ruoyi.ticket.mapper.BizOrderTicketMapper;
 import com.ruoyi.ticket.domain.BizOrderTicket;
+import com.ruoyi.ticket.service.IAntiScalperService;
 import com.ruoyi.ticket.service.IBizOrderTicketService;
 
 /**
@@ -17,6 +18,9 @@ public class BizOrderTicketServiceImpl implements IBizOrderTicketService
 {
     @Autowired
     private BizOrderTicketMapper bizOrderTicketMapper;
+
+    @Autowired
+    private IAntiScalperService antiScalperService;
 
     /**
      * 查询订单明细
@@ -51,6 +55,7 @@ public class BizOrderTicketServiceImpl implements IBizOrderTicketService
     @Override
     public int insertBizOrderTicket(BizOrderTicket bizOrderTicket)
     {
+        antiScalperService.validateBeforeAddTicket(bizOrderTicket);
         return bizOrderTicketMapper.insertBizOrderTicket(bizOrderTicket);
     }
 

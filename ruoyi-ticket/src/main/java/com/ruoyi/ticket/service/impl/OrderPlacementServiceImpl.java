@@ -10,6 +10,8 @@ import java.util.UUID;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.ruoyi.common.exception.ServiceException;
+import com.ruoyi.ticket.constant.TicketConstants;
 import com.ruoyi.ticket.domain.BizOrder;
 import com.ruoyi.ticket.domain.BizOrderTicket;
 import com.ruoyi.ticket.domain.BizSessionSeat;
@@ -45,6 +47,13 @@ public class OrderPlacementServiceImpl implements IOrderPlacementService {
     public BizOrder placeOrder(Long userId, Long sessionId, List<Long> seatIds) {
         if (seatIds == null || seatIds.isEmpty()) {
             throw new IllegalArgumentException("请选择座位");
+        }
+        if (seatIds.size() > TicketConstants.MAX_TICKETS_PER_ORDER) {
+            throw new ServiceException("单笔订单最多购买" + TicketConstants.MAX_TICKETS_PER_ORDER + "张票");
+        }
+        int userSessionCount = bizOrderTicketMapper.countUserValidTicketsForSession(userId, sessionId);
+        if (userSessionCount + seatIds.size() > TicketConstants.MAX_TICKETS_PER_USER_PER_SESSION) {
+            throw new ServiceException("您在该场次已购" + userSessionCount + "张，每人每场最多" + TicketConstants.MAX_TICKETS_PER_USER_PER_SESSION + "张");
         }
         List<BizSessionSeat> seats = bizSessionSeatMapper.selectByIds(seatIds);
         if (seats.size() != seatIds.size()) {

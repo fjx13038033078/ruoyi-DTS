@@ -68,4 +68,14 @@ public interface BizOrderTicketMapper
      * 批量插入订单明细
      */
     int batchInsert(@Param("list") List<BizOrderTicket> list);
+
+    /**
+     * 统计订单下的有效票数量
+     */
+    int countValidTicketsByOrderId(@Param("orderId") Long orderId);
+
+    /**
+     * 统计用户在某场次的有效购票总数（待支付+已支付订单）
+     */
+    int countUserValidTicketsForSession(@Param("userId") Long userId, @Param("sessionId") Long sessionId);
 }
