@@ -420,6 +420,13 @@ public class SysUserServiceImpl implements ISysUserService
         return userMapper.resetUserPwd(userName, password);
     }
 
+    @Override
+    public boolean deductPoints(Long userId, Integer points)
+    {
+        return userId != null && points != null && points > 0
+                && userMapper.deductPoints(userId, points) > 0;
+    }
+
     /**
      * 新增用户角色信息
      * 

@@ -83,4 +83,34 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         </foreach>
     </delete>
 
+    <select id="selectByIds" resultMap="BizSessionSeatResult">
+        <include refid="selectBizSessionSeatVo"/>
+        where seat_id in
+        <foreach item="seatId" collection="seatIds" open="(" separator="," close=")">
+            #{seatId}
+        </foreach>
+    </select>
+
+    <select id="selectExpiredLockedSeats" resultMap="BizSessionSeatResult">
+        <include refid="selectBizSessionSeatVo"/>
+        where status = '1' and lock_expire_time &lt; sysdate()
+    </select>
+
+    <update id="releaseSeatsByIds">
+        update biz_session_seat set status = '0', lock_expire_time = null
+        where seat_id in
+        <foreach item="seatId" collection="seatIds" open="(" separator="," close=")">
+            #{seatId}
+        </foreach>
+    </update>
+
+    <update id="lockSeatsByIds">
+        update biz_session_seat set status = '1', lock_expire_time = #{lockExpireTime}
+        where seat_id in
+        <foreach item="seatId" collection="seatIds" open="(" separator="," close=")">
+            #{seatId}
+        </foreach>
+        and status = '0'
+    </update>
+
 </mapper>

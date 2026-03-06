@@ -67,4 +67,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         </foreach>
     </delete>
 
+    <delete id="deleteByUserIdAndPerformanceId">
+        delete from biz_user_favorite where user_id = #{userId} and performance_id = #{performanceId}
+    </delete>
+
 </mapper>

@@ -39,6 +39,21 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         </where>
     </select>
 
+    <!-- 前台：上架演出列表，按是否推荐排序 -->
+    <select id="selectBizPerformanceListForFront" parameterType="com.ruoyi.ticket.domain.BizPerformance" resultMap="BizPerformanceResult">
+        <include refid="selectBizPerformanceVo"/>
+        <where>
+            AND status = '1'
+            <if test="title != null and title != ''">
+                AND title like concat('%', #{title}, '%')
+            </if>
+            <if test="isRecommend != null and isRecommend != ''">
+                AND is_recommend = #{isRecommend}
+            </if>
+        </where>
+        ORDER BY is_recommend DESC, create_time DESC
+    </select>
+
     <insert id="insertBizPerformance" parameterType="com.ruoyi.ticket.domain.BizPerformance" useGeneratedKeys="true" keyProperty="performanceId">
         insert into biz_performance
         <trim prefix="(" suffix=")" suffixOverrides=",">

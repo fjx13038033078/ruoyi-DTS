@@ -1,6 +1,7 @@
 package com.ruoyi.ticket.mapper;
 
 import java.util.List;
+import org.apache.ibatis.annotations.Param;
 import com.ruoyi.ticket.domain.BizUserFavorite;
 
 /**
@@ -57,4 +58,13 @@ public interface BizUserFavoriteMapper
      * @return 结果
      */
     int deleteBizUserFavoriteByIds(Long[] favoriteIds);
+
+    /**
+     * 按用户ID和演出ID删除收藏
+     *
+     * @param userId 用户ID
+     * @param performanceId 演出ID
+     * @return 结果
+     */
+    int deleteByUserIdAndPerformanceId(@Param("userId") Long userId, @Param("performanceId") Long performanceId);
 }

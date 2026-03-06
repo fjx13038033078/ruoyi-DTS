@@ -99,4 +99,13 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         </foreach>
     </delete>
 
+    <update id="updateStatusToCancelledByIds">
+        update biz_order set status = '2'
+        where order_id in
+        <foreach item="orderId" collection="orderIds" open="(" separator="," close=")">
+            #{orderId}
+        </foreach>
+        and status = '0'
+    </update>
+
 </mapper>

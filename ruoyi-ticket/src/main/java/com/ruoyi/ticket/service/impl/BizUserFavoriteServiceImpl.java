@@ -89,4 +89,10 @@ public class BizUserFavoriteServiceImpl implements IBizUserFavoriteService
     {
         return bizUserFavoriteMapper.deleteBizUserFavoriteById(favoriteId);
     }
+
+    @Override
+    public int deleteByUserIdAndPerformanceId(Long userId, Long performanceId)
+    {
+        return bizUserFavoriteMapper.deleteByUserIdAndPerformanceId(userId, performanceId);
+    }
 }

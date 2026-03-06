@@ -75,4 +75,19 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         </foreach>
     </delete>
 
+    <select id="selectOrderIdsBySeatIds" resultType="Long">
+        select distinct order_id from biz_order_ticket
+        where seat_id in
+        <foreach item="seatId" collection="seatIds" open="(" separator="," close=")">
+            #{seatId}
+        </foreach>
+    </select>
+
+    <insert id="batchInsert">
+        insert into biz_order_ticket (order_id, seat_id, price, status) values
+        <foreach item="item" collection="list" separator=",">
+            (#{item.orderId}, #{item.seatId}, #{item.price}, #{item.status})
+        </foreach>
+    </insert>
+
 </mapper>

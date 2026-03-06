@@ -57,4 +57,13 @@ public interface IBizUserFavoriteService
      * @return 结果
      */
     int deleteBizUserFavoriteById(Long favoriteId);
+
+    /**
+     * 按用户ID和演出ID取消收藏
+     *
+     * @param userId 用户ID
+     * @param performanceId 演出ID
+     * @return 结果
+     */
+    int deleteByUserIdAndPerformanceId(Long userId, Long performanceId);
 }

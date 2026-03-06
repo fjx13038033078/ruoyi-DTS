@@ -157,4 +157,13 @@ public interface SysUserMapper
      * @return 结果
      */
     public SysUser checkEmailUnique(String email);
+
+    /**
+     * 扣减用户积分（原子操作，仅当积分足够时扣减）
+     *
+     * @param userId 用户ID
+     * @param points 扣减积分数
+     * @return 影响行数，1表示成功
+     */
+    public int deductPoints(@Param("userId") Long userId, @Param("points") Integer points);
 }

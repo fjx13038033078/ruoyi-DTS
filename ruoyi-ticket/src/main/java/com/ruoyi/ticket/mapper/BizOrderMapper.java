@@ -1,6 +1,7 @@
 package com.ruoyi.ticket.mapper;
 
 import java.util.List;
+import org.apache.ibatis.annotations.Param;
 import com.ruoyi.ticket.domain.BizOrder;
 
 /**
@@ -57,4 +58,9 @@ public interface BizOrderMapper
      * @return 结果
      */
     int deleteBizOrderByIds(Long[] orderIds);
+
+    /**
+     * 将指定订单状态更新为已取消
+     */
+    int updateStatusToCancelledByIds(@Param("orderIds") List<Long> orderIds);
 }

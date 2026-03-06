@@ -1,6 +1,7 @@
 package com.ruoyi.ticket.mapper;
 
 import java.util.List;
+import org.apache.ibatis.annotations.Param;
 import com.ruoyi.ticket.domain.BizOrderTicket;
 
 /**
@@ -57,4 +58,14 @@ public interface BizOrderTicketMapper
      * @return 结果
      */
     int deleteBizOrderTicketByIds(Long[] ticketIds);
+
+    /**
+     * 根据座位ID列表查询关联的订单ID（去重）
+     */
+    List<Long> selectOrderIdsBySeatIds(@Param("seatIds") List<Long> seatIds);
+
+    /**
+     * 批量插入订单明细
+     */
+    int batchInsert(@Param("list") List<BizOrderTicket> list);
 }

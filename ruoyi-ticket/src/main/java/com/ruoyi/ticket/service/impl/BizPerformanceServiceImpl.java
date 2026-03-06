@@ -42,6 +42,12 @@ public class BizPerformanceServiceImpl implements IBizPerformanceService
         return bizPerformanceMapper.selectBizPerformanceList(bizPerformance);
     }
 
+    @Override
+    public List<BizPerformance> selectBizPerformanceListForFront(BizPerformance bizPerformance)
+    {
+        return bizPerformanceMapper.selectBizPerformanceListForFront(bizPerformance);
+    }
+
     /**
      * 新增演出基本信息
      *

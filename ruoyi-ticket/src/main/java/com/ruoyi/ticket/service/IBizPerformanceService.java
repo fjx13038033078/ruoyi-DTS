@@ -27,6 +27,14 @@ public interface IBizPerformanceService
     List<BizPerformance> selectBizPerformanceList(BizPerformance bizPerformance);
 
     /**
+     * 前台：查询上架演出列表，按是否推荐排序
+     *
+     * @param bizPerformance 演出基本信息
+     * @return 演出基本信息集合
+     */
+    List<BizPerformance> selectBizPerformanceListForFront(BizPerformance bizPerformance);
+
+    /**
      * 新增演出基本信息
      *
      * @param bizPerformance 演出基本信息

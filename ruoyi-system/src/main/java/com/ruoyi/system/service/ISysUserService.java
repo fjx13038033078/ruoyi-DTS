@@ -222,4 +222,13 @@ public interface ISysUserService
      */
     public String importUser(List<SysUser> userList, Boolean isUpdateSupport, String operName);
 
+    /**
+     * 扣减用户积分（原子操作）
+     *
+     * @param userId 用户ID
+     * @param points 扣减积分数
+     * @return 是否成功
+     */
+    public boolean deductPoints(Long userId, Integer points);
+
 }
