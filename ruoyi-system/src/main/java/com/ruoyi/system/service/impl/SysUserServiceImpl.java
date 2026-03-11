@@ -427,6 +427,13 @@ public class SysUserServiceImpl implements ISysUserService
                 && userMapper.deductPoints(userId, points) > 0;
     }
 
+    @Override
+    public boolean addPoints(Long userId, Integer points)
+    {
+        return userId != null && points != null && points > 0
+                && userMapper.addPoints(userId, points) > 0;
+    }
+
     /**
      * 新增用户角色信息
      * 

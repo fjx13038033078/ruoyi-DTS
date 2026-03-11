@@ -166,4 +166,13 @@ public interface SysUserMapper
      * @return 影响行数，1表示成功
      */
     public int deductPoints(@Param("userId") Long userId, @Param("points") Integer points);
+
+    /**
+     * 增加用户积分
+     *
+     * @param userId 用户ID
+     * @param points 增加积分数
+     * @return 影响行数，1表示成功
+     */
+    public int addPoints(@Param("userId") Long userId, @Param("points") Integer points);
 }

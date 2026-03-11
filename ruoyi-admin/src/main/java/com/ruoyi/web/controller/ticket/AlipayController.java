@@ -1,9 +1,12 @@
 package com.ruoyi.web.controller.ticket;
 
+import java.math.RoundingMode;
 import java.util.Date;
 import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
+
+import com.ruoyi.system.service.ISysUserService;
 
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -48,6 +51,7 @@ public class AlipayController {
     private final IBizSessionSeatService bizSessionSeatService;
     private final IBizPerformanceService bizPerformanceService;
     private final IBizPerformanceSessionService bizPerformanceSessionService;
+    private final ISysUserService sysUserService;
 
     public AlipayController(AlipayClient alipayClient,
                             AlipayProperties alipayProperties,
@@ -55,7 +59,8 @@ public class AlipayController {
                             IBizOrderTicketService bizOrderTicketService,
                             IBizSessionSeatService bizSessionSeatService,
                             IBizPerformanceService bizPerformanceService,
-                            IBizPerformanceSessionService bizPerformanceSessionService) {
+                            IBizPerformanceSessionService bizPerformanceSessionService,
+                            ISysUserService sysUserService) {
         this.alipayClient = alipayClient;
         this.alipayProperties = alipayProperties;
         this.bizOrderService = bizOrderService;
@@ -63,6 +68,7 @@ public class AlipayController {
         this.bizSessionSeatService = bizSessionSeatService;
         this.bizPerformanceService = bizPerformanceService;
         this.bizPerformanceSessionService = bizPerformanceSessionService;
+        this.sysUserService = sysUserService;
     }
 
     /**
@@ -147,6 +153,13 @@ public class AlipayController {
             if (seat != null) {
                 seat.setStatus("2");
                 bizSessionSeatService.updateBizSessionSeat(seat);
+            }
+        }
+        // 支付多少元增加多少积分（四舍五入取整）
+        if (order.getUserId() != null && order.getTotalAmount() != null) {
+            int pointsToAdd = order.getTotalAmount().setScale(0, RoundingMode.HALF_UP).intValue();
+            if (pointsToAdd > 0) {
+                sysUserService.addPoints(order.getUserId(), pointsToAdd);
             }
         }
         response.sendRedirect(SUCCESS_REDIRECT_URL);

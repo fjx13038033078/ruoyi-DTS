@@ -358,5 +358,10 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		update sys_user set points = points - #{points}, update_time = sysdate()
 		where user_id = #{userId} and points >= #{points}
 	</update>
-	
+
+	<update id="addPoints">
+		update sys_user set points = IFNULL(points, 0) + #{points}, update_time = sysdate()
+		where user_id = #{userId}
+	</update>
+
 </mapper>

@@ -231,4 +231,13 @@ public interface ISysUserService
      */
     public boolean deductPoints(Long userId, Integer points);
 
+    /**
+     * 增加用户积分
+     *
+     * @param userId 用户ID
+     * @param points 增加积分数
+     * @return 是否成功
+     */
+    public boolean addPoints(Long userId, Integer points);
+
 }
